@@ -1,0 +1,37 @@
+body{
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+h1 {
+  border: 1px solid black;
+  text-align: center;
+  background: white;
+  margin: 0;
+  color: black;
+}
+
+#name-list {
+  background: gray;
+  padding: 20px;
+}
+
+button {
+  background: black;
+  color: white;
+  font-size: 20px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  font-weight: 700;
+}
+
+section{
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.801);
+  color: white;
+}
+
+.section-button{
+ text-align: center;
+}
