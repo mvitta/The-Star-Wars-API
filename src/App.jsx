@@ -3,6 +3,8 @@ import logo from './logo.svg';
 import './App.css';
 import personajes from '../src/services/fetchPersonajes';
 import getPersonaje from '../src/services/fetchOnePersonaje';
+import Header from './components/Header';
+import Footer from './components/Footer';
 // spanglish jaja
 function App() {
   const [caracteres, setCaracteres] = useState({});
@@ -14,19 +16,21 @@ function App() {
 
   const BASEURL = 'https://swapi.dev/api/';
 
+  //obtiene todos los personajes de la pagina 1
   useEffect(() => {
     personajes(BASEURL, 'people', pagina).then((res) => {
-      console.log(res);
       setCaracteres(res);
     });
   }, [pagina]);
 
+  //hace render cuando el useState de la ID cambia
   useEffect(() => {
     getPersonaje(BASEURL, ID).then((res) => {
-      // console.log(res);
       setDetalles(res);
     });
   }, [ID]);
+
+  // render cuando carga la pagina, para obtener la seccion donde se encuentran los nombres de los personajes
 
   useEffect(() => {
     document.getElementById('name-list').addEventListener('click', (e) => {
@@ -35,6 +39,8 @@ function App() {
     });
   }, []);
 
+  // useRef para referencia el input y asignarle un evento chance y obtener el contenido del input
+
   useEffect(() => {
     const actual = buscar.current;
     actual.addEventListener('change', () => {
@@ -42,61 +48,65 @@ function App() {
     });
   }, []);
 
+  // para pasar a la pagina siquiente o anterior
   function cambiarPagina(numero) {
     setPagina(pagina + numero);
   }
 
   return (
     <div className='App'>
-      <div style={{ padding: '20px' }}>
-        <label htmlFor='search'>Buscar Personaje</label>
-        <br />
-        <input ref={buscar} type='text' name='search' id='search' />
-        <br />
-        <button
-          id='btn-buscar'
-          onClick={() => {
-            setDetalles({});
-            fetch(`https://swapi.dev/api/people/?search=${textBuscar}`)
-              .then((response) => response.json())
-              .then((data) => setCaracteres(data.results))
-              .catch((err) => console.log(new Error(err)));
-          }}
-        >
-          Buscar
-        </button>
-      </div>
-      <div id='name-list'>
-        {caracteres?.results?.map((caracter, index) => {
-          const { name, url } = caracter;
-          const id = url.split('/').slice(-2)[0];
-          return (
-            <h1 id={id} key={crypto.randomUUID()}>
-              {index} : {name}
-            </h1>
-          );
-        })}
-      </div>
-      <div style={{ margin: '10px', textAlign: 'center' }}>
-        <button
-          onClick={() => {
-            cambiarPagina(-1);
-          }}
-        >
-          Anterior
-        </button>
-        <span style={{ padding: '0 10px 0 10px' }}>{pagina}</span>
-        <button
-          onClick={() => {
-            cambiarPagina(1);
-          }}
-        >
-          Siquiente
-        </button>
-      </div>
-      {detalles && (
-        <div>
-          <section>
+      <Header />
+      <main>
+        <div className='section-search'>
+          <label htmlFor='search'>Buscar Personaje</label>
+          <br />
+          <input ref={buscar} type='text' name='search' id='search' />
+          <br />
+          <button
+            id='btn-buscar'
+            onClick={() => {
+              setDetalles({});
+              fetch(`https://swapi.dev/api/people/?search=${textBuscar}`)
+                .then((response) => response.json())
+                .then((data) => {
+                  setCaracteres(data);
+                })
+                .catch((err) => console.log(new Error(err)));
+            }}
+          >
+            Buscar
+          </button>
+        </div>
+        <div id='name-list'>
+          {caracteres?.results?.map((caracter, index) => {
+            const { name, url } = caracter;
+            const id = url.split('/').slice(-2)[0];
+            return (
+              <h1 id={id} key={crypto.randomUUID()}>
+                {index} : {name}
+              </h1>
+            );
+          })}
+        </div>
+        <div className='section-pagination'>
+          <button
+            onClick={() => {
+              cambiarPagina(-1);
+            }}
+          >
+            Anterior
+          </button>
+          <span>{pagina}</span>
+          <button
+            onClick={() => {
+              cambiarPagina(1);
+            }}
+          >
+            Siquiente
+          </button>
+        </div>
+        {detalles && (
+          <section className='section-details'>
             <h1>{detalles.name}</h1>
             <ul>
               <li>
@@ -115,11 +125,10 @@ function App() {
               </li>
             </ul>
           </section>
-        </div>
-      )}
-      <div className='section-button'>
-        <button onClick={() => {}}>Mostrar detalles</button>
-      </div>
+        )}
+      </main>
+
+      <Footer />
     </div>
   );
 }
